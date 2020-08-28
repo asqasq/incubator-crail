@@ -39,12 +39,14 @@ import org.apache.crail.metadata.DataNodeStatistics;
 import org.apache.crail.rpc.RpcClient;
 import org.apache.crail.rpc.RpcConnection;
 import org.apache.crail.rpc.RpcDispatcher;
+import org.apache.crail.rpc.RpcErrors;
 import org.apache.crail.utils.CrailUtils;
 import org.slf4j.Logger;
 
 public interface StorageServer extends Configurable, Runnable {
 	public abstract StorageResource allocateResource() throws Exception;
 	public abstract boolean isAlive();
+	public abstract void prepareToShutDown();
 	public abstract InetSocketAddress getAddress();
 	
 	public static void main(String[] args) throws Exception {
@@ -185,7 +187,19 @@ public interface StorageServer extends Configurable, Runnable {
 			sumCount += diffCount;			
 			
 			LOG.info("datanode statistics, freeBlocks " + sumCount);
+			processBlockCount(server, rpcConnection, sumCount);
 			Thread.sleep(CrailConstants.STORAGE_KEEPALIVE*1000);
 		}			
+	}
+
+	public static void processBlockCount(StorageServer server, RpcConnection rpc, long count) throws Exception {
+		if (count < 0) {
+			if (count == RpcErrors.ERR_DATANODE_STOP) {
+				server.prepareToShutDown();
+				rpc.close();
+			} else {
+				throw new Exception("Invalid opcode : " + count);
+			}
+		}
 	}
 }

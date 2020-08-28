@@ -126,4 +126,8 @@ public class NvmfStorageServer implements StorageServer {
 	public boolean isAlive() {
 		return isAlive;
 	}
+
+	public void prepareToShutDown(){
+
+	}
 }

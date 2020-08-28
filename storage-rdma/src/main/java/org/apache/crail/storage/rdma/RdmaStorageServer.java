@@ -144,4 +144,8 @@ public class RdmaStorageServer implements Runnable, StorageServer {
 	public boolean isAlive() {
 		return isAlive;
 	}
+
+	public void prepareToShutDown(){
+
+	}
 }

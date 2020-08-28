@@ -36,7 +36,9 @@ public class DataNodeBlocks extends DataNodeInfo {
 	private ConcurrentHashMap<Long, BlockInfo> regions;
 	private LinkedBlockingQueue<NameNodeBlockInfo> freeBlocks;
 	private long token;
-	
+	private long blockCount;
+	private boolean scheduleForRemoval;
+
 	public static DataNodeBlocks fromDataNodeInfo(DataNodeInfo dnInfo) throws UnknownHostException{
 		DataNodeBlocks dnInfoNn = new DataNodeBlocks(dnInfo.getStorageType(), dnInfo.getStorageClass(), dnInfo.getLocationClass(), dnInfo.getIpAddress(), dnInfo.getPort());
 		return dnInfoNn;
@@ -46,18 +48,37 @@ public class DataNodeBlocks extends DataNodeInfo {
 		super(storageType, getStorageClass, locationClass, ipAddress, port);
 		this.regions = new ConcurrentHashMap<Long, BlockInfo>();
 		this.freeBlocks = new LinkedBlockingQueue<NameNodeBlockInfo>();
+		this.scheduleForRemoval = false;
+		this.blockCount = 0;
+	}
+
+	private void updateBlockCount(){
+			this.blockCount++;
 	}
 	
 	public void addFreeBlock(NameNodeBlockInfo nnBlock) {
 		regions.put(nnBlock.getRegion().getLba(), nnBlock.getRegion());
 		freeBlocks.add(nnBlock);
+		updateBlockCount();
 	}
 
 	public NameNodeBlockInfo getFreeBlock() throws InterruptedException {
 		NameNodeBlockInfo block = this.freeBlocks.poll();
 		return block;
 	}
-	
+
+	public void scheduleForRemoval() {
+		this.scheduleForRemoval = true;
+	}
+
+	public boolean safeForRemoval() {
+		return  this.blockCount == this.freeBlocks.size();
+	}
+
+	public boolean isScheduleForRemoval(){
+		return this.scheduleForRemoval;
+	}
+
 	public int getBlockCount() {
 		return freeBlocks.size();
 	}

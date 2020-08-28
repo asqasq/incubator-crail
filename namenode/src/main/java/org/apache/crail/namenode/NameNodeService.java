@@ -412,7 +412,19 @@ public class NameNodeService implements RpcNameNodeService, Sequencer {
 		if (dnInfoNn == null){
 			return RpcErrors.ERR_DATANODE_NOT_REGISTERED;
 		}
-		
+		// here is our control hack
+		if(dnInfoNn.isScheduleForRemoval()){
+			// we now check if we have a possibility to eject it now
+			if(dnInfoNn.safeForRemoval()){
+				// now we eject it from everywhere
+				blockStore.removeDataNode(dnInfo);
+				response.setServiceId(serviceId);
+				// we are abusing the free block count
+				response.setFreeBlockCount(RpcErrors.ERR_DATANODE_STOP);
+				return RpcErrors.ERR_OK;
+			} // otherwise we have to wait until all block are not free
+		}
+
 		dnInfoNn.touch();
 		response.setServiceId(serviceId);
 		response.setFreeBlockCount(dnInfoNn.getBlockCount());

@@ -84,7 +84,17 @@ public class BlockStore {
 		int storageClass = dnInfo.getStorageClass();
 		return storageClasses[storageClass].getDataNode(dnInfo);
 	}
-	
+
+	short removeDataNode(DataNodeInfo dn) throws Exception {
+		int storageClass = dn.getStorageClass();
+		return storageClasses[storageClass].removeDatanode(dn);
+	}
+
+	short prepareDataNodeForRemoval(DataNodeInfo dn) throws Exception {
+		int storageClass = dn.getStorageClass();
+		return storageClasses[storageClass].prepareForRemovalDatanode(dn);
+	}
+
 }
 
 class StorageClass {
@@ -171,9 +181,33 @@ class StorageClass {
 		return RpcErrors.ERR_OK;
 
 	}
-	
+
+	short prepareForRemovalDatanode(DataNodeInfo dn) throws Exception {
+		// this will only mark it for removal
+		return _prepareOrRemoveDN(dn, true);
+	}
+
+	short removeDatanode(DataNodeInfo dn) throws Exception {
+		// this will remove it as well
+		return _prepareOrRemoveDN(dn, false);
+	}
+
 	//---------------
-	
+
+	private short _prepareOrRemoveDN(DataNodeInfo dn, boolean onlyMark) throws Exception {
+		DataNodeBlocks toBeRemoved = membership.get(dn.key());
+		if (toBeRemoved == null) {
+			System.err.println("DataNode: " + dn.toString() + " not found");
+			return RpcErrors.ERR_DATANODE_NOT_REGISTERED;
+		} else {
+			if (onlyMark)
+				toBeRemoved.scheduleForRemoval();
+			else
+				membership.remove(toBeRemoved.key());
+		}
+		return RpcErrors.ERR_OK;
+	}
+
 	private void _addDataNode(DataNodeBlocks dataNode){
 		LOG.info("adding datanode " + CrailUtils.getIPAddressFromBytes(dataNode.getIpAddress()) + ":" + dataNode.getPort() + " of type " + dataNode.getStorageType() + " to storage class " + storageClass);
 		DataNodeArray hostMap = affinitySets.get(dataNode.getLocationClass());
