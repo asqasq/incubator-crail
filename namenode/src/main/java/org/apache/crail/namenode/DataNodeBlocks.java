@@ -36,7 +36,7 @@ public class DataNodeBlocks extends DataNodeInfo {
 	private ConcurrentHashMap<Long, BlockInfo> regions;
 	private LinkedBlockingQueue<NameNodeBlockInfo> freeBlocks;
 	private long token;
-	private long blockCount;
+	private long maxBlockCount;
 	private boolean scheduleForRemoval;
 
 	public static DataNodeBlocks fromDataNodeInfo(DataNodeInfo dnInfo) throws UnknownHostException{
@@ -49,11 +49,17 @@ public class DataNodeBlocks extends DataNodeInfo {
 		this.regions = new ConcurrentHashMap<Long, BlockInfo>();
 		this.freeBlocks = new LinkedBlockingQueue<NameNodeBlockInfo>();
 		this.scheduleForRemoval = false;
-		this.blockCount = 0;
+		this.maxBlockCount = 0;
 	}
 
 	private void updateBlockCount(){
-			this.blockCount++;
+
+		// When a datanode connects for the first time to the namenode, all of the offered storage capacities
+		// are added in the form of free blocks. By keeping track of this number (which grows block for block), we
+		// learn the maximum available capacity in this datanode. Only when the number of free blocks equals the number
+		// of all blocks, the datanode is safe to be removed.
+		if(freeBlocks.size() > this.maxBlockCount)
+			this.maxBlockCount = freeBlocks.size();
 	}
 	
 	public void addFreeBlock(NameNodeBlockInfo nnBlock) {
@@ -72,7 +78,7 @@ public class DataNodeBlocks extends DataNodeInfo {
 	}
 
 	public boolean safeForRemoval() {
-		return  this.blockCount == this.freeBlocks.size();
+		return  this.maxBlockCount == this.freeBlocks.size();
 	}
 
 	public boolean isScheduleForRemoval(){
@@ -80,7 +86,7 @@ public class DataNodeBlocks extends DataNodeInfo {
 	}
 
 	public int getBlockCount() {
-		return freeBlocks.size();
+		return this.freeBlocks.size();
 	}
 
 	public boolean regionExists(BlockInfo region) {
