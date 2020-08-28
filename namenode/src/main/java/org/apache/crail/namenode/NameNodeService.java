@@ -585,7 +585,12 @@ public class NameNodeService implements RpcNameNodeService, Sequencer {
 	
 	
 	//--------------- helper functions
-	
+
+	public short prepareDataNodeForRemoval(DataNodeInfo dn) throws Exception {
+		LOG.info("Removing data node: " + dn);
+		return blockStore.prepareDataNodeForRemoval(dn);
+	}
+
 	void appendToDeleteQueue(AbstractNode fileInfo) throws Exception {
 		if (fileInfo != null) {
 			fileInfo.setDelay(CrailConstants.TOKEN_EXPIRATION);
