@@ -7,8 +7,8 @@ NAMENODE_IP = "127.0.0.1"
 NAMENODE_PORT = 9999
 
 # TODO: Initialize with IP and PORT of CRAIL datanode which should leave
-datanode_ip = "127.0.0.1"
-datanode_port = 50020
+datanode_ip = "192.168.1.183"
+datanode_port = 50021
 
 def ip2int(ip):
   return struct.unpack("!I", socket.inet_aton(ip))[0]

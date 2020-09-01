@@ -193,13 +193,13 @@ public interface StorageServer extends Configurable, Runnable {
 	}
 
 	public static void processBlockCount(StorageServer server, RpcConnection rpc, long count) throws Exception {
+		if (count == RpcErrors.ERR_DATANODE_STOP) {
+			server.prepareToShutDown();
+			rpc.close();
+		}
+
 		if (count < 0) {
-			if (count == RpcErrors.ERR_DATANODE_STOP) {
-				server.prepareToShutDown();
-				rpc.close();
-			} else {
-				throw new Exception("Invalid opcode : " + count);
-			}
+			throw new Exception("Received negative number of free blocks : " + count);
 		}
 	}
 }

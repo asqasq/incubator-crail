@@ -197,7 +197,7 @@ class StorageClass {
 	private short _prepareOrRemoveDN(DataNodeInfo dn, boolean onlyMark) throws Exception {
 		DataNodeBlocks toBeRemoved = membership.get(dn.key());
 		if (toBeRemoved == null) {
-			System.err.println("DataNode: " + dn.toString() + " not found");
+			LOG.error("DataNode: " + dn.toString() + " not found");
 			return RpcErrors.ERR_DATANODE_NOT_REGISTERED;
 		} else {
 			if (onlyMark)
