@@ -19,6 +19,7 @@
 package org.apache.crail.namenode.rpc.darpc;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 import org.apache.crail.CrailNodeType;
 import org.apache.crail.conf.CrailConstants;
@@ -35,6 +36,7 @@ import org.apache.crail.rpc.RpcGetDataNode;
 import org.apache.crail.rpc.RpcGetFile;
 import org.apache.crail.rpc.RpcGetLocation;
 import org.apache.crail.rpc.RpcPing;
+import org.apache.crail.rpc.RpcRemoveDataNode;
 import org.apache.crail.rpc.RpcProtocol;
 import org.apache.crail.rpc.RpcRenameFile;
 import org.apache.crail.rpc.RpcRequestMessage;
@@ -267,6 +269,15 @@ public class DaRPCNameNodeConnection implements RpcConnection {
 		DaRPCNameNodeFuture<RpcPing> nameNodeFuture = new DaRPCNameNodeFuture<RpcPing>(future, pingRes);
 		
 		return nameNodeFuture;	
+	}
+
+	@Override
+	public RpcFuture<RpcRemoveDataNode> removeDataNode(InetAddress ipaddr, int port) throws Exception {
+
+		// TODO : implement body + all corresponding parts
+		// TODO : to support removeDataNode RPC call for DaRPC
+
+		return (RpcFuture<RpcRemoveDataNode>) new Object();
 	}
 	
 	@Override

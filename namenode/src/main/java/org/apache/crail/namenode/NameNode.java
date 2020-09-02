@@ -83,7 +83,6 @@ public class NameNode {
 		CrailConstants.verify();
 		
 		RpcNameNodeService service = RpcNameNodeService.createInstance(CrailConstants.NAMENODE_RPC_SERVICE);
-		RemoveDataNodeTrigger trigger = new RemoveDataNodeTrigger(service);
 
 		if (!CrailConstants.NAMENODE_LOG.isEmpty()){
 			LogDispatcher logDispatcher = new LogDispatcher(service);

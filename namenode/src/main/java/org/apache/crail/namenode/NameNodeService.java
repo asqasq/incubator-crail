@@ -582,7 +582,18 @@ public class NameNodeService implements RpcNameNodeService, Sequencer {
 		
 		return RpcErrors.ERR_OK;
 	}
-	
+
+	@Override
+	public short removeDataNode(RpcRequestMessage.RemoveDataNodeReq request, RpcResponseMessage.RemoveDataNodeRes response, RpcNameNodeState errorState) throws Exception {
+		// TODO : adapt this to also work for other storage tiers
+		DataNodeInfo dn_info = new DataNodeInfo(0,0,0,request.getIPAddress().getAddress(), request.port());
+
+		short res = prepareDataNodeForRemoval(dn_info);
+		response.setData(res);
+
+		return RpcErrors.ERR_OK;
+	}
+
 	
 	//--------------- helper functions
 
