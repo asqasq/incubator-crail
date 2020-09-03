@@ -3,8 +3,6 @@ package org.apache.crail.tools;
 import org.apache.commons.cli.*;
 import org.apache.crail.conf.CrailConfiguration;
 import org.apache.crail.conf.CrailConstants;
-import org.apache.crail.metadata.DataNodeInfo;
-import org.apache.crail.metadata.DataNodeStatistics;
 import org.apache.crail.rpc.*;
 import org.apache.crail.utils.CrailUtils;
 import org.slf4j.Logger;

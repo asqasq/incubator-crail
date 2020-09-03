@@ -91,8 +91,19 @@ public class BlockStore {
 	}
 
 	short prepareDataNodeForRemoval(DataNodeInfo dn) throws Exception {
-		int storageClass = dn.getStorageClass();
-		return storageClasses[storageClass].prepareForRemovalDatanode(dn);
+
+		// Despite several potential storageClasses the pair (Ip-addr,port) should
+		// nevertheless target only one running datanode instance.
+		// Therefore we can iterate over all storageClasses to check whether
+		// the requested datanode is part of one of the storageClasses.
+		for(StorageClass storageClass : storageClasses) {
+			if (storageClass.getDataNode(dn) != null) {
+				return storageClass.prepareForRemovalDatanode(dn);
+			}
+		}
+
+		LOG.error("DataNode: " + dn.toString() + " not found");
+		return RpcErrors.ERR_DATANODE_NOT_REGISTERED;
 	}
 
 }
