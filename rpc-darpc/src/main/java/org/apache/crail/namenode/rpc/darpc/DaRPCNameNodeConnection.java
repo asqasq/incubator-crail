@@ -274,10 +274,18 @@ public class DaRPCNameNodeConnection implements RpcConnection {
 	@Override
 	public RpcFuture<RpcRemoveDataNode> removeDataNode(InetAddress ipaddr, int port) throws Exception {
 
-		// TODO : implement body + all corresponding parts
-		// TODO : to support removeDataNode RPC call for DaRPC
+		RpcRequestMessage.RemoveDataNodeReq removeDataNodeReq = new RpcRequestMessage.RemoveDataNodeReq(ipaddr, port);
+		DaRPCNameNodeRequest request = new DaRPCNameNodeRequest(removeDataNodeReq);
+		request.setCommand(RpcProtocol.CMD_REMOVE_DATANODE);
 
-		return (RpcFuture<RpcRemoveDataNode>) new Object();
+		RpcResponseMessage.RemoveDataNodeRes removeDataNodeRes = new RpcResponseMessage.RemoveDataNodeRes();
+		DaRPCNameNodeResponse response = new DaRPCNameNodeResponse(removeDataNodeRes);
+		
+		DaRPCFuture<DaRPCNameNodeRequest, DaRPCNameNodeResponse> future = issueRPC(request, response);
+		
+		DaRPCNameNodeFuture<RpcRemoveDataNode> nameNodeFuture = new DaRPCNameNodeFuture<RpcRemoveDataNode>(future, removeDataNodeRes);
+		
+		return nameNodeFuture;
 	}
 	
 	@Override

@@ -61,7 +61,7 @@ public class TcpNameNodeRequest extends RpcRequestMessage implements NaRPCMessag
 		this.dumpNameNodeReq = new RpcRequestMessage.DumpNameNodeReq();
 		this.pingNameNodeReq = new RpcRequestMessage.PingNameNodeReq();
 		this.getDataNodeReq = new RpcRequestMessage.GetDataNodeReq();
-		this.removeDataNodeReq = new RemoveDataNodeReq();
+		this.removeDataNodeReq = new RpcRequestMessage.RemoveDataNodeReq();
 	}
 	
 	public TcpNameNodeRequest(RpcRequestMessage.CreateFileReq message) {
