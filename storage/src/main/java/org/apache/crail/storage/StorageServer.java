@@ -177,6 +177,7 @@ public interface StorageServer extends Configurable, Runnable {
 			DataNodeStatistics stats = storageRpc.getDataNode();
 			long newCount = stats.getFreeBlockCount();
 			long serviceId = stats.getServiceId();
+			short status = stats.getStatus();
 			
 			long oldCount = 0;
 			if (blockCount.containsKey(serviceId)){
@@ -187,19 +188,15 @@ public interface StorageServer extends Configurable, Runnable {
 			sumCount += diffCount;			
 			
 			LOG.info("datanode statistics, freeBlocks " + sumCount);
-			processBlockCount(server, rpcConnection, sumCount);
+			processBlockCount(server, rpcConnection, status);
 			Thread.sleep(CrailConstants.STORAGE_KEEPALIVE*1000);
 		}			
 	}
 
-	public static void processBlockCount(StorageServer server, RpcConnection rpc, long count) throws Exception {
-		if (count == RpcErrors.ERR_DATANODE_STOP) {
+	public static void processBlockCount(StorageServer server, RpcConnection rpc, short status) throws Exception {
+		if (status == RpcErrors.ERR_DATANODE_STOP) {
 			server.prepareToShutDown();
 			rpc.close();
-		}
-
-		if (count < 0) {
-			throw new Exception("Received negative number of free blocks : " + count);
 		}
 	}
 }

@@ -598,6 +598,10 @@ public class RpcResponseMessage {
 		public void setFreeBlockCount(int blockCount) {
 			this.statistics.setFreeBlockCount(blockCount);
 		}
+
+		public void setStatus(short status) {
+			this.statistics.setStatus(status);
+		}
 		
 		public short getError(){
 			return 0;
