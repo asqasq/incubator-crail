@@ -145,7 +145,7 @@ public class RdmaStorageServer implements Runnable, StorageServer {
 		return isAlive;
 	}
 
-	public void prepareToShutDown(){
+	public void prepareToShutDown(Thread thread){
 
 		LOG.info("Preparing RDMA-Storage server for shutdown");
 

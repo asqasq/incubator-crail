@@ -127,7 +127,23 @@ public class NvmfStorageServer implements StorageServer {
 		return isAlive;
 	}
 
-	public void prepareToShutDown(){
 
+	public void prepareToShutDown(Thread thread){
+
+		LOG.info("Preparing Nvmf-Storage server for shutdown");
+
+		// stop jnvmf controller
+		try {
+			this.controller.free();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+		// interrupt sleeping thread
+		try {
+			thread.interrupt();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -101,7 +101,7 @@ public class TcpStorageServer implements Runnable, StorageServer, NaRPCService<T
 	}
 
 	@Override
-	public void prepareToShutDown(){
+	public void prepareToShutDown(Thread thread){
 		this.alive = false;
 		// do more clean up, if required
 		try {
