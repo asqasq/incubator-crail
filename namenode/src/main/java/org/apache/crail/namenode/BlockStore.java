@@ -301,7 +301,7 @@ class StorageClass {
 					for (int i = 0; i < size; i++){
 						int index = (startIndex + i) % size;
 						DataNodeBlocks anyDn = arrayList.get(index);
-						if (anyDn.isOnline()){
+						if (anyDn.isOnline() && !anyDn.isScheduleForRemoval()){
 							block = anyDn.getFreeBlock();
 						}
 						if (block != null){
