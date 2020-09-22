@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 public interface StorageServer extends Configurable, Runnable {
 	public abstract StorageResource allocateResource() throws Exception;
 	public abstract boolean isAlive();
-	public abstract void prepareToShutDown(Thread thread);
+	public abstract void prepareToShutDown();
 	public abstract InetSocketAddress getAddress();
 	
 	public static void main(String[] args) throws Exception {
@@ -195,8 +195,15 @@ public interface StorageServer extends Configurable, Runnable {
 
 	public static void processStatus(StorageServer server, RpcConnection rpc, Thread thread, short status) throws Exception {
 		if (status == RpcErrors.ERR_DATANODE_STOP) {
-			server.prepareToShutDown(thread);
+			server.prepareToShutDown();
 			rpc.close();
+			
+			// interrupt sleeping thread
+			try {
+				thread.interrupt();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

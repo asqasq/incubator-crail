@@ -130,9 +130,12 @@ public class RdmaStorageServer implements Runnable, StorageServer {
 				LOG.info("accepting client connection, conncount " + allEndpoints.size());
 			}			
 		} catch(Exception e){
-			e.printStackTrace();
+			// if StorageServer is still marked as running output stacktrace
+			// otherwise this is expected behaviour
+			if(this.isAlive) {
+				e.printStackTrace();
+			}
 		}
-		this.isAlive = false;
 	}
 
 	@Override
@@ -145,9 +148,10 @@ public class RdmaStorageServer implements Runnable, StorageServer {
 		return isAlive;
 	}
 
-	public void prepareToShutDown(Thread thread){
+	public void prepareToShutDown(){
 
 		LOG.info("Preparing RDMA-Storage server for shutdown");
+		this.isAlive = false;
 
 		try {
 
