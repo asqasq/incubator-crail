@@ -19,7 +19,7 @@
 package org.apache.crail.namenode;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -104,6 +104,56 @@ public class BlockStore {
 
 		LOG.error("DataNode: " + dn.toString() + " not found");
 		return RpcErrors.ERR_DATANODE_NOT_REGISTERED;
+	}
+
+	public double getStorageUsage() throws Exception {
+		long total = 0;
+		long free = 0;
+		for(StorageClass storageClass : storageClasses) {
+			total += storageClass.getTotalCapacity();
+			free += storageClass.getFreeCapacity();
+		}
+
+		// if there is no available capacity (i.e. total number of available blocks is 0),
+		// return 1.0 which tells that all storage is used
+		if(total != 0) {
+			double available = (double) free / (double) total;
+			return 1.0 - available;
+		} else {
+			return 1.0;
+		}
+
+	}
+
+	public int getNumberDatanodes() {
+		int total = 0;
+
+		for(StorageClass storageClass : storageClasses) {
+			total += storageClass.getRunningDatanodes();
+		}
+
+		return total;
+	}
+
+	public DataNodeBlocks identifyRemoveCandidate() {
+
+		ArrayList<DataNodeBlocks> dataNodeBlocks = new ArrayList<DataNodeBlocks>();
+		for(StorageClass storageClass : storageClasses) {
+			dataNodeBlocks.addAll(storageClass.getDataNodeBlocks());
+		}
+
+		Collections.sort(dataNodeBlocks, new Comparator<DataNodeBlocks>() {
+			public int compare(DataNodeBlocks d1, DataNodeBlocks d2) {
+				if(d1.getBlockCount() < d2.getBlockCount()) {
+					return 1;
+				} else if (d1.getBlockCount() > d2.getBlockCount()) {
+					return -1;
+				} else return 0;
+			}
+		});
+
+		return dataNodeBlocks.get(0);
+
 	}
 
 }
@@ -204,6 +254,34 @@ class StorageClass {
 	}
 
 	//---------------
+
+	public long getTotalCapacity() {
+		long capacity = 0;
+
+		for(DataNodeBlocks datanode : membership.values()) {
+			capacity += datanode.getMaxBlockCount();
+		}
+
+		return capacity;
+	}
+
+	public long getFreeCapacity() {
+		long capacity = 0;
+
+		for(DataNodeBlocks datanode : membership.values()) {
+			capacity += datanode.getBlockCount();
+		}
+
+		return capacity;
+	}
+
+	public Collection<DataNodeBlocks> getDataNodeBlocks() {
+		return this.membership.values();
+	}
+
+	public int getRunningDatanodes() {
+		return this.membership.size();
+	}
 
 	private short _prepareOrRemoveDN(DataNodeInfo dn, boolean onlyMark) throws Exception {
 		DataNodeBlocks toBeRemoved = membership.get(dn.key());
