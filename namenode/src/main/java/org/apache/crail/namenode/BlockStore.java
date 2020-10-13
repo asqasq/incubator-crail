@@ -102,6 +102,8 @@ class StorageClass {
 		this.affinitySets = new ConcurrentHashMap<Integer, DataNodeArray>();
 		if (CrailConstants.NAMENODE_BLOCKSELECTION.equalsIgnoreCase("roundrobin")){
 			this.blockSelection = new RoundRobinBlockSelection();
+		} else if (CrailConstants.NAMENODE_BLOCKSELECTION.equalsIgnoreCase("sequential")) {
+			this.blockSelection = new SequentialBlockSelection();
 		} else {
 			this.blockSelection = new RandomBlockSelection();
 		}
@@ -224,7 +226,18 @@ class StorageClass {
 		public int getNext(int size) {
 			return ThreadLocalRandom.current().nextInt(size);
 		}
-	}	
+	}
+	
+	public class SequentialBlockSelection implements BlockSelection {
+		public SequentialBlockSelection(){
+			LOG.info("sequential block selection");
+		}
+
+		@Override
+		public int getNext(int size) {
+			return 0;
+		}
+	}
 	
 	private class DataNodeArray {
 		private ArrayList<DataNodeBlocks> arrayList;
