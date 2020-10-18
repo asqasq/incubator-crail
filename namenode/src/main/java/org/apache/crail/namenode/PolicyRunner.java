@@ -1,5 +1,6 @@
 package org.apache.crail.namenode;
 
+import org.apache.crail.conf.CrailConstants;
 import org.apache.crail.metadata.DataNodeInfo;
 import org.apache.crail.rpc.RpcNameNodeService;
 import org.apache.crail.utils.CrailUtils;
@@ -26,7 +27,7 @@ public abstract class PolicyRunner implements Runnable {
             checkPolicy();
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(CrailConstants.ELASTICSTORE_POLICYRUNNER_INTERVAL * 1000);
             } catch(Exception e) {
                 e.printStackTrace();
             }
