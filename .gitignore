@@ -18,6 +18,10 @@ hs_err_pid*
 
 .idea/
 *.iml
+.classpath
+.project
+.settings
+.vscode
 
 target/
 assembly/target/
@@ -31,3 +35,5 @@ rpc-narpc/target/
 storage/target/
 storage-nvmf/target/
 storage-rdma/target/
+
+!workload/workload.jar
