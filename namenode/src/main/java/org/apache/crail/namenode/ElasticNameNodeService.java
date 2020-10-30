@@ -13,6 +13,8 @@ public class ElasticNameNodeService extends NameNodeService {
     PolicyRunner policyRunner = new FreeCapacityPolicy(this, kubernetesClient, CrailConstants.ELASTICSTORE_SCALEUP, CrailConstants.ELASTICSTORE_SCALEDOWN,
                                                        CrailConstants.ELASTICSTORE_MINNODES, CrailConstants.ELASTICSTORE_MAXNODES);
 
+    BlockUsageLogger blockUsageLogger = new BlockUsageLogger(this);
+
     public ElasticNameNodeService() throws IOException {
 
     }
