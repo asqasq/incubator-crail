@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class KubernetesClient {
+public class KubernetesClient implements DatanodeLauncher{
 
     static final Logger LOG = CrailUtils.getLogger();
     BatchV1Api apiInstance;

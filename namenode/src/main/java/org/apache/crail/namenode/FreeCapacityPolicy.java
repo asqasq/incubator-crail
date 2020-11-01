@@ -10,8 +10,8 @@ public class FreeCapacityPolicy extends PolicyRunner {
     int minDataNodes;
     int maxDataNodes;
 
-    FreeCapacityPolicy(RpcNameNodeService service, KubernetesClient kubernetesClient, double scaleUp, double scaleDown, int minDataNodes, int maxDataNodes) {
-        super(service, kubernetesClient);
+    FreeCapacityPolicy(RpcNameNodeService service, DatanodeLauncher datanodeLauncher, double scaleUp, double scaleDown, int minDataNodes, int maxDataNodes) {
+        super(service, datanodeLauncher);
         this.scaleUp = scaleUp;
         this.scaleDown = scaleDown;
         this.minDataNodes = minDataNodes;
@@ -34,7 +34,7 @@ public class FreeCapacityPolicy extends PolicyRunner {
 
             if(usage > this.scaleUp && this.service.getNumberDatanodes() < maxDataNodes) {
                 LOG.info("Scale up detected");
-                kubernetesClient.launchTCPinstance();
+                datanodeLauncher.launchTCPinstance();
             }
 
 

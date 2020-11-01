@@ -134,6 +134,9 @@ public class CrailConstants {
 	public static final String ELASTICSTORE_POLICYRUNNER_INTERVAL_KEY = "crail.elasticstore.policyrunner.interval";
 	public static int ELASTICSTORE_POLICYRUNNER_INTERVAL = 10;
 
+	public static final String ELASTICSTORE_DATANODE_LAUNCHER_KEY = "crail.elasticstore.datanodeLauncher";
+	public static String ELASTICSTORE_DATANODE_LAUNCHER = "local";
+
 	public static void updateConstants(CrailConfiguration conf){
 		//general
 		if (conf.get(DIRECTORY_DEPTH_KEY) != null) {
@@ -246,6 +249,9 @@ public class CrailConstants {
 		if (conf.get(ELASTICSTORE_POLICYRUNNER_INTERVAL_KEY) != null) {
 			ELASTICSTORE_POLICYRUNNER_INTERVAL = Integer.parseInt(conf.get(ELASTICSTORE_POLICYRUNNER_INTERVAL_KEY));
 		}
+		if (conf.get(ELASTICSTORE_DATANODE_LAUNCHER_KEY) != null) {
+			ELASTICSTORE_DATANODE_LAUNCHER = conf.get(ELASTICSTORE_DATANODE_LAUNCHER_KEY);
+		}
 	}
 
 	public static void printConf(){
@@ -283,6 +289,7 @@ public class CrailConstants {
 		LOG.info(ELASTICSTORE_MAXNODES_KEY + " " + ELASTICSTORE_MAXNODES);
 		LOG.info(ELASTICSTORE_MINNODES_KEY + " " + ELASTICSTORE_MINNODES);
 		LOG.info(ELASTICSTORE_POLICYRUNNER_INTERVAL_KEY + " " + ELASTICSTORE_POLICYRUNNER_INTERVAL);
+		LOG.info(ELASTICSTORE_DATANODE_LAUNCHER_KEY + " " + ELASTICSTORE_DATANODE_LAUNCHER);
 	}
 
 	public static void verify() throws IOException {

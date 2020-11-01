@@ -10,12 +10,12 @@ public abstract class PolicyRunner implements Runnable {
 
     static final Logger LOG = CrailUtils.getLogger();
     NameNodeService service;
-    KubernetesClient kubernetesClient;
+    DatanodeLauncher datanodeLauncher;
 
-    PolicyRunner(RpcNameNodeService service, KubernetesClient kubernetesClient){
+    PolicyRunner(RpcNameNodeService service, DatanodeLauncher datanodeLauncher){
         this.service = (NameNodeService) service;
         Thread runner = new Thread(this);
-        this.kubernetesClient = kubernetesClient;
+        this.datanodeLauncher = datanodeLauncher;
         runner.start();
     }
 
