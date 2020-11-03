@@ -135,6 +135,16 @@ public class BlockStore {
 		return total;
 	}
 
+	public int getBlockCapacity() throws Exception {
+		int total = 0;
+
+		for(StorageClass storageClass: storageClasses) {
+			total += storageClass.getTotalCapacity();
+		}
+
+		return total;
+	}
+
 	public int getNumberDatanodes() {
 		int total = 0;
 

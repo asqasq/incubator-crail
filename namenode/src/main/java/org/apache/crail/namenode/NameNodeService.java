@@ -563,6 +563,10 @@ public class NameNodeService implements RpcNameNodeService, Sequencer {
 		return this.blockStore.getBlockUsage();
 	}
 
+	public int getBlockCapacity() throws Exception {
+		return this.blockStore.getBlockCapacity();
+	}
+
 	public int getNumberDatanodes() {
 		return this.blockStore.getNumberDatanodes();
 	}

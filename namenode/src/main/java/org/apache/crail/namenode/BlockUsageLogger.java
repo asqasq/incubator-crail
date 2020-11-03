@@ -14,7 +14,7 @@ public class BlockUsageLogger implements Runnable {
         while(true) {
 
             try {
-                System.out.println("Current block usage: " + this.service.getBlockUsage());
+                System.out.println("Current block usage:    " + this.service.getBlockUsage() + "/" + this.service.getBlockCapacity());
                 Thread.sleep(1000);
             } catch(Exception e) {
                 e.printStackTrace();
