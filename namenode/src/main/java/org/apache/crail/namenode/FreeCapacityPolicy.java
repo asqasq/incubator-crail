@@ -9,6 +9,7 @@ public class FreeCapacityPolicy extends PolicyRunner {
     double scaleDown;
     int minDataNodes;
     int maxDataNodes;
+    int datanodes; // maintains the desired number of datanodes (i.e. a datanode might be still starting / terminating)
 
     FreeCapacityPolicy(RpcNameNodeService service, DatanodeLauncher datanodeLauncher, double scaleUp, double scaleDown, int minDataNodes, int maxDataNodes) {
         super(service, datanodeLauncher);
@@ -16,6 +17,7 @@ public class FreeCapacityPolicy extends PolicyRunner {
         this.scaleDown = scaleDown;
         this.minDataNodes = minDataNodes;
         this.maxDataNodes = maxDataNodes;
+        this.datanodes = 0;
     }
 
     @Override
@@ -23,18 +25,21 @@ public class FreeCapacityPolicy extends PolicyRunner {
 
         try {
             double usage = this.service.getStorageUsage();
-            LOG.info("Current storage usage is " + 100*usage + "%");
+            LOG.info("Current storage usage is " + 100*usage + "%.");
+            LOG.info("Current number of datanodes is " + this.datanodes + ".");
 
-            if(usage < scaleDown && this.service.getNumberDatanodes() > minDataNodes) {
+            if(usage < scaleDown && this.datanodes > minDataNodes) {
                 LOG.info("Scale down detected");
 
                 DataNodeBlocks removeCandidate = this.service.identifyRemoveCandidate();
                 this.service.prepareDataNodeForRemoval(removeCandidate);
+                this.datanodes--;
             }
 
-            if(usage > this.scaleUp && this.service.getNumberDatanodes() < maxDataNodes) {
+            if(usage > this.scaleUp && this.datanodes < maxDataNodes) {
                 LOG.info("Scale up detected");
                 datanodeLauncher.launchTCPinstance();
+                this.datanodes++;
             }
 
 
