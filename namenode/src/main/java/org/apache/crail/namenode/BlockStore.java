@@ -162,6 +162,7 @@ public class BlockStore {
 			dataNodeBlocks.addAll(storageClass.getDataNodeBlocks());
 		}
 
+		// sort all datanodes by increasing numbers of available datablocks
 		Collections.sort(dataNodeBlocks, new Comparator<DataNodeBlocks>() {
 			public int compare(DataNodeBlocks d1, DataNodeBlocks d2) {
 				if(d1.getBlockCount() < d2.getBlockCount()) {
@@ -172,7 +173,15 @@ public class BlockStore {
 			}
 		});
 
-		return dataNodeBlocks.get(0);
+		// iterate over datanodes and return first datanode which is not already scheduled for removal
+		for(DataNodeBlocks candidate: dataNodeBlocks) {
+			if(!candidate.isScheduleForRemoval()) {
+				return candidate;
+			}
+		}
+
+		// return null if there is no available candidate
+		return null;
 
 	}
 

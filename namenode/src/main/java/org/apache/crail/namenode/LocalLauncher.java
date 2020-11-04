@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.File;
+
 
 public class LocalLauncher implements  DatanodeLauncher {
 
@@ -21,7 +23,14 @@ public class LocalLauncher implements  DatanodeLauncher {
         try {
             this.instances++;
             String port = Integer.toString(50020+this.instances);
-            Process p = new ProcessBuilder(System.getenv("CRAIL_HOME") + "/bin/crail", "datanode", "--",  "-p" + port).start();
+
+            File out_log = new File(System.getenv("CRAIL_HOME")+"/logs/"+port+".out");
+            File err_log = new File(System.getenv("CRAIL_HOME")+"/logs/"+port+".err");
+
+            out_log.createNewFile();
+            err_log.createNewFile();
+
+            Process p = new ProcessBuilder(System.getenv("CRAIL_HOME") + "/bin/crail", "datanode", "--",  "-p" + port).redirectError(err_log).redirectOutput(out_log).start();
             //Process p = Runtime.getRuntime().exec("pwd");
             BufferedReader inputReader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader errorReader = new BufferedReader(new InputStreamReader(p.getErrorStream()));

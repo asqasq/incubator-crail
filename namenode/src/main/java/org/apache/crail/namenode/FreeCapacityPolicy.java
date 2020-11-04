@@ -32,8 +32,11 @@ public class FreeCapacityPolicy extends PolicyRunner {
                 LOG.info("Scale down detected");
 
                 DataNodeBlocks removeCandidate = this.service.identifyRemoveCandidate();
-                this.service.prepareDataNodeForRemoval(removeCandidate);
-                this.datanodes--;
+
+                if(removeCandidate != null) {
+                    this.service.prepareDataNodeForRemoval(removeCandidate);
+                    this.datanodes--;
+                }
             }
 
             if(usage > this.scaleUp && this.datanodes < maxDataNodes) {
