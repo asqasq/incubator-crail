@@ -27,7 +27,7 @@ public abstract class PolicyRunner implements Runnable {
             checkPolicy();
 
             try {
-                Thread.sleep(CrailConstants.ELASTICSTORE_POLICYRUNNER_INTERVAL * 1000);
+                Thread.sleep(CrailConstants.ELASTICSTORE_POLICYRUNNER_INTERVAL);
             } catch(Exception e) {
                 e.printStackTrace();
             }

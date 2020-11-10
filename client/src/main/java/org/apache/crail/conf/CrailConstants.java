@@ -132,7 +132,7 @@ public class CrailConstants {
 	public static int ELASTICSTORE_MAXNODES = 10;
 
 	public static final String ELASTICSTORE_POLICYRUNNER_INTERVAL_KEY = "crail.elasticstore.policyrunner.interval";
-	public static int ELASTICSTORE_POLICYRUNNER_INTERVAL = 10;
+	public static int ELASTICSTORE_POLICYRUNNER_INTERVAL = 1000;
 
 	public static final String ELASTICSTORE_DATANODE_LAUNCHER_KEY = "crail.elasticstore.datanodeLauncher";
 	public static String ELASTICSTORE_DATANODE_LAUNCHER = "local";
