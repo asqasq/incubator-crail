@@ -10,6 +10,8 @@ public class FreeCapacityPolicy extends PolicyRunner {
     int minDataNodes;
     int maxDataNodes;
     int datanodes; // maintains the desired number of datanodes (i.e. a datanode might be still starting / terminating)
+    boolean updated; // shows whether a launch/terminate datanode operation returned
+    int lastCapacity; // maintains the capacity that was available when the launch/terminate datanode operation was issued
 
     FreeCapacityPolicy(RpcNameNodeService service, DatanodeLauncher datanodeLauncher, double scaleUp, double scaleDown, int minDataNodes, int maxDataNodes) {
         super(service, datanodeLauncher);
@@ -18,31 +20,47 @@ public class FreeCapacityPolicy extends PolicyRunner {
         this.minDataNodes = minDataNodes;
         this.maxDataNodes = maxDataNodes;
         this.datanodes = 0;
+        this.updated = true;
+        this.lastCapacity = 0;
     }
 
     @Override
     public void checkPolicy() {
 
         try {
+
+            // log current usage information
             double usage = this.service.getStorageUsage();
             LOG.info("Current storage usage is " + 100*usage + "%.");
             LOG.info("Current number of datanodes is " + this.datanodes + ".");
 
-            if(usage < scaleDown && this.datanodes > minDataNodes) {
-                LOG.info("Scale down detected");
-
-                DataNodeBlocks removeCandidate = this.service.identifyRemoveCandidate();
-
-                if(removeCandidate != null) {
-                    this.service.prepareDataNodeForRemoval(removeCandidate);
-                    this.datanodes--;
-                }
+            // check whether datanode launch/terminate operation finished
+            if(!this.updated && this.lastCapacity != this.service.getBlockCapacity()) {
+                this.updated = true;
             }
 
-            if(usage > this.scaleUp && this.datanodes < maxDataNodes) {
-                LOG.info("Scale up detected");
-                datanodeLauncher.launchTCPinstance();
-                this.datanodes++;
+            // check whether scaling up or down is possible
+            if(this.updated) {
+                if(usage < scaleDown && this.datanodes > minDataNodes) {
+                    LOG.info("Scale down detected");
+    
+                    DataNodeBlocks removeCandidate = this.service.identifyRemoveCandidate();
+    
+                    if(removeCandidate != null) {
+                        this.lastCapacity = this.service.getBlockCapacity();
+                        this.updated = false;
+                        this.service.prepareDataNodeForRemoval(removeCandidate);
+                        this.datanodes--;
+                    }
+                }
+    
+                if(usage > this.scaleUp && this.datanodes < maxDataNodes) {
+                    LOG.info("Scale up detected");
+                    this.lastCapacity = this.service.getBlockCapacity();
+                    this.updated = false;
+                    datanodeLauncher.launchTCPinstance();
+                    this.datanodes++;
+                }
             }
 
 
